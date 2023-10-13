@@ -1,5 +1,8 @@
 #!/bin/sh
 
 set -e
-. ./envvars.sh && cargo nextest run --archive-file test.tar.zst
-. ./envvars.sh && cargo llvm-cov report --html
+set -o allexport
+. ./envvars.sh
+rm -r /app/target
+cargo nextest run --archive-file test.tar.zst --extract-to /app --verbose
+cargo llvm-cov report --cobertura

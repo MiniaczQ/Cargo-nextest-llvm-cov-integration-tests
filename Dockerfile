@@ -15,12 +15,12 @@ RUN chmod +x ./envvars.sh
 RUN --mount=type=cache,target=/usr/local/cargo/registry/ \
     --mount=type=cache,target=/usr/local/cargo/git/db/ \
     --mount=type=cache,target=/app/target \
-    . ./envvars.sh && cargo nextest run --no-run
+    set -o allexport && . ./envvars.sh && cargo nextest run --no-run
 
 FROM build as unit-test
 WORKDIR /app/
 RUN --mount=type=cache,target=/usr/local/cargo/registry/ \
     --mount=type=cache,target=/usr/local/cargo/git/db/ \
     --mount=type=cache,target=/app/target \
-    . ./envvars.sh && cargo nextest archive --archive-file test.tar.zst --lib --bins
+    set -o allexport && . ./envvars.sh && cargo nextest archive --archive-file test.tar.zst --lib --bins
 ENTRYPOINT ./run-report.sh
