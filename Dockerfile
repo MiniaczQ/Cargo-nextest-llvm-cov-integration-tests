@@ -10,17 +10,17 @@ COPY . .
 RUN --mount=type=cache,target=/usr/local/cargo/registry/ \
     --mount=type=cache,target=/usr/local/cargo/git/db/ \
     --mount=type=cache,target=/app/target \
-    cargo llvm-cov show-env >> ./envvars.sh
+    cargo llvm-cov show-env --export-prefix >> ./envvars.sh
 RUN chmod +x ./envvars.sh
 RUN --mount=type=cache,target=/usr/local/cargo/registry/ \
     --mount=type=cache,target=/usr/local/cargo/git/db/ \
     --mount=type=cache,target=/app/target \
-    set -o allexport && . ./envvars.sh && cargo nextest run --no-run
+    . ./envvars.sh && cargo nextest run --no-run
 
-FROM build as unit-test
+FROM build as test
 WORKDIR /app/
 RUN --mount=type=cache,target=/usr/local/cargo/registry/ \
     --mount=type=cache,target=/usr/local/cargo/git/db/ \
     --mount=type=cache,target=/app/target \
-    set -o allexport && . ./envvars.sh && cargo nextest archive --archive-file test.tar.zst --lib --bins
+    . ./envvars.sh && cargo nextest archive --archive-file test.tar.zst --lib --bins
 ENTRYPOINT ./run-report.sh

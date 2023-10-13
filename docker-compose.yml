@@ -1,9 +1,7 @@
 version: "3"
 services:
-  unit-test:
-    container_name: unit-test
-    security_opt:
-      - seccomp:unconfined
+  test:
+    container_name: test
     build:
       context: .
-      target: unit-test
+      target: test
